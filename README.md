@@ -20,24 +20,6 @@ This repository contains the Bash workflow used for the identification of DHCR7 
 
 ---
 
-## Repository Structure
-
-7-Dehydrocholesterol-Reductase-DHCR7-Phylogenetic-Pipeline
-│
-├── Results/
-│   ├── Blast_dm_vs_atl.tsv
-│   ├── atlantic_ids.txt
-│   ├── combined_alignment.fa
-│   ├── combined_aln.fa.treefile
-│   └── phylogenetic_tree.png
-│
-├── script/
-│   └── pipeline.sh
-│
-├── Workflow.png
-├── LICENSE
-└── README.md
-
 ## Software
 
 | Software | Purpose |

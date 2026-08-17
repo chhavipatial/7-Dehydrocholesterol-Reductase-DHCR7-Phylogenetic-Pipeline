@@ -12,7 +12,6 @@
 # 6. Builds a phylogenetic tree
 #
 ###############################################################################
-
 # Input files
 
 DM_CDS="DHCR7_DM.fa"

@@ -30,9 +30,9 @@ mkdir -p $OUTDIR
 echo "Creating BLAST database..."
 
 makeblastdb \
--in $ATL_CDS \
+-in "$ATL_CDS" \
 -dbtype nucl \
--out $OUTDIR/Atlantic_DB
+-out "$OUTDIR/Atlantic_DB"
 
 ###############################################################################
 # STEP 2: Search for homologous sequences
@@ -41,11 +41,12 @@ makeblastdb \
 echo "Running BLAST..."
 
 blastn \
--query $DM_CDS \
--db $OUTDIR/Atlantic_DB \
+-query "$DM_CDS" \
+-db "$OUTDIR/Atlantic_DB" \
 -evalue 1e-10 \
+-max_target_seqs 100 \
 -outfmt 6 \
--out $OUTDIR/blast_results.tsv
+-out "$OUTDIR/DHCR7_blast.tsv"
 
 ###############################################################################
 # STEP 3: Extract Atlantic IDs
@@ -53,19 +54,18 @@ blastn \
 
 echo "Extracting IDs..."
 
-cut -f2 $OUTDIR/blast_results.tsv | sort | uniq \
-> $OUTDIR/Atlantic_IDs.txt
+cut -f2 "$OUTDIR/DHCR7_blast.tsv" | sort | uniq \
+> "$OUTDIR/Atlantic_IDs.txt"
 
 ###############################################################################
 # STEP 4: Extract homolog sequences
 ###############################################################################
-
 echo "Extracting sequences..."
 
 seqkit grep \
--f $OUTDIR/Atlantic_IDs.txt \
-$ATL_CDS \
-> $OUTDIR/Atlantic_Homologs.fa
+-f "$OUTDIR/Atlantic_IDs.txt" \
+"$ATL_CDS" \
+> "$OUTDIR/Atlantic_Homologs.fa"
 
 ###############################################################################
 # STEP 5: Combine sequences
@@ -74,9 +74,9 @@ $ATL_CDS \
 echo "Combining sequences..."
 
 cat \
-$DM_CDS \
-$OUTDIR/Atlantic_Homologs.fa \
-> $OUTDIR/DHCR7_combined.fa
+"$DM_CDS" \
+"$OUTDIR/Atlantic_Homologs.fa" \
+> "$OUTDIR/DHCR7_combined.fa"
 
 ###############################################################################
 # STEP 6: Multiple sequence alignment
@@ -85,24 +85,27 @@ $OUTDIR/Atlantic_Homologs.fa \
 echo "Running MAFFT..."
 
 mafft --auto \
-$OUTDIR/DHCR7_combined.fa \
-> $OUTDIR/DHCR7_aligned.fa
+"$OUTDIR/DHCR7_combined.fa" \
+> "$OUTDIR/DHCR7_aligned.fa"
+
 
 ###############################################################################
 # STEP 7: Build phylogenetic tree
 ###############################################################################
 
+
 echo "Running IQ-TREE..."
 
 iqtree2 \
--s $OUTDIR/DHCR7_aligned.fa \
+-s "$OUTDIR/DHCR7_aligned.fa" \
 -m MFP \
 -B 1000 \
--pre $OUTDIR/DHCR7
+-pre "$OUTDIR/DHCR7"
 
 ###############################################################################
 # STEP 8: Results
 ###############################################################################
+
 
 echo ""
 echo "Analysis Complete!"
@@ -110,6 +113,12 @@ echo ""
 
 echo "Tree file:"
 echo "$OUTDIR/DHCR7.treefile"
+
+echo ""
+echo "Other IQ-TREE output files:"
+echo "$OUTDIR/DHCR7.contree"
+echo "$OUTDIR/DHCR7.iqtree"
+echo "$OUTDIR/DHCR7.log"
 
 echo ""
 echo "Upload DHCR7.treefile to iTOL for visualization."
